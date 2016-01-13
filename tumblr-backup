@@ -1,0 +1,22 @@
+#!/usr/local/bin/bash
+TUMBLR_SITES="blog.jbryanscott.com"
+
+BACKUP_DIR="$HOME/tumblr-backups/`date '+%Y-%m-%d_%H-%M-%S'`"
+mkdir -p $BACKUP_DIR && cd $BACKUP_DIR
+
+for site in $TUMBLR_SITES
+do
+    echo "Downloading $site..."
+
+    wget \
+     --recursive \
+     --adjust-extension \
+     --html-extension \
+     --convert-links \
+     --restrict-file-names=unix \
+     --span-hosts \
+     --show-progress \
+     --domains "$site, media.tumblr.com" \
+         $site
+done
+echo "tumblr-backup has finished."
