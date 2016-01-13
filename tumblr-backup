@@ -1,14 +1,13 @@
 #!/usr/local/bin/bash
 TUMBLR_SITES="blog.jbryanscott.com"
-
-BACKUP_DIR="$HOME/tumblr-backups/`date '+%Y-%m-%d_%H-%M-%S'`"
-mkdir -p $BACKUP_DIR && cd $BACKUP_DIR
+BACKUP_DESTINATION="$HOME/tumblr-backups/`date '+%Y-%m-%d_%H-%M-%S'`"
 
 for site in $TUMBLR_SITES
 do
     echo "Downloading $site..."
 
     wget \
+     --directory-prefix="$BACKUP_DESTINATION"\
      --recursive \
      --adjust-extension \
      --html-extension \
