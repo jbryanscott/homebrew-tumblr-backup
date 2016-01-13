@@ -1,7 +1,8 @@
 #!/usr/local/bin/bash
 TUMBLR_SITES="blog.jbryanscott.com"
-BACKUP_DESTINATION="$HOME/tumblr-backups/`date '+%Y-%m-%d_%H-%M-%S'`"
+BACKUP_DESTINATION="$HOME/tumblr-backups/`date -u '+%Y-%m-%d_%H-%M-%S'`"
 
+echo "Starting tumblr-backup at `date -u `."
 for site in $TUMBLR_SITES
 do
     echo "Downloading $site..."
@@ -18,4 +19,4 @@ do
      --domains "$site, media.tumblr.com" \
          $site
 done
-echo "tumblr-backup has finished."
+echo "tumblr-backup has finished at `date -u`."
