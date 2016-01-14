@@ -1,22 +1,45 @@
 #!/usr/local/bin/bash
-TUMBLR_SITES="blog.jbryanscott.com"
-BACKUP_DESTINATION="$HOME/tumblr-backups/`date -u '+%Y-%m-%d_%H-%M-%S'`"
 
-echo "Starting tumblr-backup at `date -u `."
-for site in $TUMBLR_SITES
+# usage: $tumblr-backup --sites="blog.jbryanscott.com jbryanscott.tumblr.com" --destination="$HOME/tumblr-backups/`date`"
+
+# Initialize defaults
+backup_destination="$HOME/tumblr-backups/`date -u '+%Y-%m-%d_%H-%M-%S'`"
+
+# Read inputs
+for i in "$@"; do
+    case $i in
+        -s=*|--sites=*|--tumblr_sites=*)
+            tumblr_sites="${i#*=}" ;;
+        -d=*|--destination=*)
+            backup_destination="${i#*=}" ;;
+        *)
+            ;;
+    esac
+    shift
+done
+
+if [ -z "$tumblr_sites" ]; then
+    echo "$(tput setaf 1)Fatal: -s | --sites | --tumblr_sites must not be empty.$(tput setaf 7)"
+    exit
+fi
+
+echo "$(tput setaf 1)Starting tumblr-backup from <$tumblr_sites> to <$backup_destination> at $(date -u && tput setaf 7)"
+for site in $tumblr_sites
 do
     echo "Downloading $site..."
 
     wget \
-     --directory-prefix="$BACKUP_DESTINATION"\
+     --directory-prefix="$backup_destination"\
      --recursive \
      --adjust-extension \
      --html-extension \
      --convert-links \
      --restrict-file-names=unix \
      --span-hosts \
+     --quiet \
      --show-progress \
+     --progress=bar:force \
      --domains "$site, media.tumblr.com" \
          $site
 done
-echo "tumblr-backup has finished at `date -u`."
+echo "$(tput setaf 1)Completed tumblr-backup from <$tumblr_sites> to $backup_destination> at $(date -u && tput setaf 7)"
