@@ -4,6 +4,7 @@
 
 # Initialize defaults
 backup_destination="$HOME/tumblr-backups/`date -u '+%Y-%m-%d_%H-%M-%S'`"
+is_reduce_to_zip=false
 
 # Read inputs
 for i in "$@"; do
@@ -12,6 +13,8 @@ for i in "$@"; do
             tumblr_sites="${i#*=}" ;;
         -d=*|--destination=*)
             backup_destination="${i#*=}" ;;
+        --reduce-to-zip)
+            is_reduce_to_zip=true ;;
         *)
             ;;
     esac
@@ -43,3 +46,12 @@ do
          $site
 done
 echo "$(tput setaf 1)Completed tumblr-backup from <$tumblr_sites> to $backup_destination> at $(date -u && tput setaf 7)"
+
+if [ "$is_reduce_to_zip" = true ]; then
+    echo "$(tput setaf 1)Creating .zip umblr-backup from <$tumblr_sites> to $backup_destination> at $(date -u && tput setaf 7)"
+    for folder in $(cd $backup_destination && ls -d */)
+    do
+        zip -r "$backup_destination/${folder%%/}.zip" "$backup_destination/$folder"
+        rm -rf "$backup_destination/$folder"
+    done
+fi
